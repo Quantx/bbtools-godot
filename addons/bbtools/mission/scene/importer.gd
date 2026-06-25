@@ -46,13 +46,14 @@ func _import_scene(mission_path: String, _flags: int, _options: Dictionary) -> N
 	
 	var draw_terrain := mission_file.get_8() as bool
 	
-	mission.title = mission_file.get_pascal_string()
-	mission.attack_objective = mission_file.get_pascal_string()
-	mission.defense_objective = mission_file.get_pascal_string()
+	mission.title_tr = mission_file.get_pascal_string()
+	
+	mission.attack_objective_tr = mission_file.get_pascal_string()
+	mission.defense_objective_tr = mission_file.get_pascal_string()
 	
 	mission.symmetric_targets = mission_file.get_8() as bool
-	mission.attack_targets = mission_file.get_pascal_string()
-	mission.defense_targets = mission_file.get_pascal_string()
+	mission.attack_targets_tr = mission_file.get_pascal_string()
+	mission.defense_targets_tr = mission_file.get_pascal_string()
 	
 	var map_big_path := mission_file.get_pascal_string()
 	if !map_big_path.is_empty():
