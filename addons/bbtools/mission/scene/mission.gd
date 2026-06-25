@@ -1,10 +1,21 @@
+@tool
 class_name BBMission extends Node3D
+
+@export var map: Texture2D
+
+@export var title: StringName
+
+@export var attack_objective: StringName
+@export var defense_objective: StringName
+
+# If this is true, then attack and defense targets are shared by both teams
+@export var symmetric_targets: bool
+@export var attack_targets: StringName
+@export var defense_targets: StringName
 
 @export_enum("Day", "Evening", "Night", "Campaign") var current_stage: int:
 	set = _set_current_stage
 @export var stages: Array[BBStage]
-
-@export var map: Texture2D
 
 @export var sun: DirectionalLight3D
 @export var water: MeshInstance3D

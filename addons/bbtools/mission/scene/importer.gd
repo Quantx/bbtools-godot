@@ -46,6 +46,14 @@ func _import_scene(mission_path: String, _flags: int, _options: Dictionary) -> N
 	
 	var draw_terrain := mission_file.get_8() as bool
 	
+	mission.title = mission_file.get_pascal_string()
+	mission.attack_objective = mission_file.get_pascal_string()
+	mission.defense_objective = mission_file.get_pascal_string()
+	
+	mission.symmetric_targets = mission_file.get_8() as bool
+	mission.attack_targets = mission_file.get_pascal_string()
+	mission.defense_targets = mission_file.get_pascal_string()
+	
 	var map_big_path := mission_file.get_pascal_string()
 	if !map_big_path.is_empty():
 		mission.map = load(map_big_path) as Texture2D
@@ -62,7 +70,11 @@ func _import_scene(mission_path: String, _flags: int, _options: Dictionary) -> N
 		
 		mission.object_material = object_material
 	
-	_import_objects(mission_file, mission)
+	var mission_object_count := _import_objects(mission_file, mission)
+	if mission_object_count <= 0:
+		push_error("Failed to import mission objects")
+		mission.free()
+		return null
 	
 	var start_pos := Vector3(mission_file.get_float(), mission_file.get_float(), mission_file.get_float())
 	var start_yaw := mission_file.get_float()
@@ -93,7 +105,7 @@ func _import_scene(mission_path: String, _flags: int, _options: Dictionary) -> N
 	
 	return mission
 
-func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) -> void:
+func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) -> int:
 	var object_root := Node3D.new()
 	object_root.name = "Objects"
 	
@@ -118,7 +130,7 @@ func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) 
 				model.remove_child(anim_player)
 				anim_player.queue_free()
 			
-			model.set_script(load("res://addons/bbtools/mission/object.gd"))
+			model.set_script(load("res://addons/bbtools/mission/scene/object.gd"))
 			object = model as BBObject
 		else:
 			object = BBObject.new()
@@ -143,6 +155,8 @@ func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) 
 		
 		object_root.add_child(object)
 		object.owner = mission
+	
+	return mission_object_count
 
 func _import_ground(file : FileAccess, base_path: String, environment: Environment, mission: Node):
 	var sky_mode := file.get_8()
