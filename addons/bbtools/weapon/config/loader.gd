@@ -15,8 +15,8 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	config.id = file.get_8()
 	config.type = file.get_8()
 	
-	var prefix := BBTools.get_content_prefix(path)
-	config.resource_name = BBWeaponConfig.config_name(prefix, config.type, config.id)
+	config.name_tr = file.get_pascal_string()
+	config.description_tr = file.get_pascal_string()
 	
 	config.category = file.get_8()
 	config.damage_type = file.get_8()

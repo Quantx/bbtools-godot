@@ -15,6 +15,9 @@ enum ClassType {
 
 @export var id: int
 
+@export var name_tr: StringName
+@export var description_tr: StringName
+
 @export_enum("Gen 1", "Gen 2", "Gen 3", "Gen 2S", "Gen 1S", "Jar") var cockpit_type: int
 @export_enum("Gen 1", "Gen 2", "Gen 3") var generation: int
 @export var manufacturer: int

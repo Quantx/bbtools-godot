@@ -13,7 +13,9 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	
 	var config := BBMechConfig.new()
 	config.id = file.get_8()
-	config.resource_name = "loc:mech_%02d" % config.id
+	
+	config.name_tr = file.get_pascal_string()
+	config.description_tr = file.get_pascal_string()
 	
 	config.scene_path = base_path.path_join("Mech_%02d.mech_scene" % config.id)
 	

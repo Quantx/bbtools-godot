@@ -14,19 +14,6 @@ const weapon_type_strings: Dictionary[WeaponType,StringName] = {
 	WeaponType.EWEP: &"ewep",
 }
 
-static func config_name(prefix: StringName, wep_type: WeaponType, id: int) -> StringName:
-	var wep_str := weapon_type_strings[wep_type]
-	return &"%s:%s:%02d" % [prefix, wep_str, id]
-
-static func config_path(name: StringName) -> String:
-	var parts := name.split(":")
-	if parts.size() != 3:
-		push_error("Invalid config name: %s" % name)
-		return ""
-	
-	var base_path := BBTools.get_content_path(parts[0])
-	return base_path.path_join("weapons/%s/%s.weapon" % [parts[1], parts[2]])
-
 enum WeaponCategory {
 	Artillery = 0,
 	Laser = 1,
@@ -84,6 +71,10 @@ const mlrs_hurtbox_height : float = 2000.0
 
 @export var id: int
 @export var type: WeaponType
+
+@export var name_tr: StringName
+@export var description_tr: StringName
+
 @export var category: WeaponCategory
 @export var damage_type: DamageType
 @export var tracking: int
