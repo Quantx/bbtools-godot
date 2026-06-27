@@ -22,6 +22,7 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	config.cockpit_type = file.get_8()
 	config.generation = file.get_8()
 	config.manufacturer = file.get_8()
+	config.faction_flags = file.get_8()
 	config.weight_type = file.get_8()
 	config.class_type = file.get_8()
 	config.profile_description = file.get_8()

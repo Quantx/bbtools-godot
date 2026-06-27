@@ -25,6 +25,7 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 	material.resource_name = "MechMaterial"
 	material.shader = load("res://addons/bbtools/mech/scene/mech.gdshader") as Shader
 	material.set_shader_parameter("albedo_texture", texture)
+	material.resource_local_to_scene = true
 	mech.mech_material = material
 	
 	for i in 4:

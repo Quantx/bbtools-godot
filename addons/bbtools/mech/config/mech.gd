@@ -21,6 +21,7 @@ enum ClassType {
 @export_enum("Gen 1", "Gen 2", "Gen 3", "Gen 2S", "Gen 1S", "Jar") var cockpit_type: int
 @export_enum("Gen 1", "Gen 2", "Gen 3") var generation: int
 @export var manufacturer: int
+@export_flags("REDFOR", "BLUFOR", "GRNFOR", "YELFOR") var faction_flags: int
 @export var weight_type: WeightType
 @export var class_type: ClassType
 @export var profile_description: int
