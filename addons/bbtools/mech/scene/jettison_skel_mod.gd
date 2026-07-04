@@ -20,9 +20,8 @@ class JettisonBone extends RefCounted:
 	var local_velocity: Vector3
 	var transform: Transform3D
 	
-	func _init(_bone_idx: int, _local_velocity: Vector3) -> void:
+	func _init(_bone_idx: int) -> void:
 		bone_idx = _bone_idx
-		local_velocity = _local_velocity
 		
 		state = JettisonBoneState.Start
 		transform = Transform3D.IDENTITY
@@ -71,7 +70,28 @@ func jettison_bone(bone_name: StringName, local_velocity: Vector3) -> void:
 	if bone_idx < 0:
 		return
 	
-	_jettisoned_bones[bone_name] = JettisonBone.new(bone_idx, local_velocity)
+	var jb := JettisonBone.new(bone_idx)
+	jb.local_velocity = local_velocity
+	
+	_jettisoned_bones[bone_name] = jb
+
+func hide_bone(bone_name: StringName) -> void:
+	if bone_name in _jettisoned_bones:
+		return
+	
+	var skeleton := get_skeleton()
+	if !skeleton:
+		return
+	
+	var bone_idx := skeleton.find_bone(bone_name)
+	if bone_idx < 0:
+		return
+	
+	var jb := JettisonBone.new(bone_idx)
+	jb.transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.001), Vector3.DOWN * -1000.0)
+	jb.state = JettisonBoneState.Stop
+	
+	_jettisoned_bones[bone_name] = jb
 
 func reset_bone(bone_name: StringName) -> void:
 	_jettisoned_bones.erase(bone_name)

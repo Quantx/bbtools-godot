@@ -448,6 +448,13 @@ func drop_sub_tank(right: bool, speed: float = 5.0) -> void:
 	var velocity := (tank_right_jettision_direction if right else tank_left_jettison_direction) * speed
 	chassis_jettison_skel_mod.jettison_bone(bone_name, velocity)
 
+func set_sub_tank_visible(right: bool, tank_visible: bool) -> void:
+	var bone_name := get_special(Bones.TankRight if right else Bones.TankLeft)
+	if tank_visible:
+		chassis_jettison_skel_mod.reset_bone(bone_name)
+	else:
+		chassis_jettison_skel_mod.hide_bone(bone_name)
+
 @export var chassis_opt_armor_bones: PackedStringArray
 @export var hatch_opt_armor_bones: PackedStringArray
 func drop_opt_armor(speed: float = 5.0) -> void: 
