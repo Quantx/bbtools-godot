@@ -20,7 +20,7 @@ void fragment() {
 	ALBEDO = mix(albedo.rgb, paint_color.rgb, paint_color.a);
 	ALPHA = albedo.a;
 	
-	METALLIC = 1.0;
+	//METALLIC = 1.0;
 	SPECULAR = 1.0 - COLOR.g;
 	//IRRADIANCE = vec4(ALBEDO, COLOR.b);
 	
