@@ -45,6 +45,7 @@ func _apply_mech_material(node: Node) -> void:
 	var mesh_inst := node.get_node(^"Skeleton3D/0") as MeshInstance3D
 	mesh_inst.material_override = mech_material
 
+@export var paint_areas: Array[PackedByteArray]
 func set_paint_colors(colors: PackedColorArray) -> void:
 	if colors.size() != BBMechConfig.paint_area_count:
 		push_error("Cannot set mech paint colors, need %d colors" % BBMechConfig.paint_area_count)

@@ -43,6 +43,9 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 		var hatch_mesh_inst := hatch.get_node(^"Skeleton3D/0") as MeshInstance3D
 		mech.hatch_meshes.append(hatch_mesh_inst.mesh)
 		
+		var paint_areas := _get_paint_areas([chassis_mesh_inst.mesh, hatch_mesh_inst.mesh])
+		mech.paint_areas.append(paint_areas)
+		
 		if i == 0:
 			chassis.name = "Chassis"
 			mech.add_child(chassis)
@@ -268,3 +271,16 @@ func _get_root_motion_velocity(anim_mixer: AnimationMixer, anim_name: StringName
 	var start := anim.position_track_interpolate(track_idx, 0)
 	var end := anim.position_track_interpolate(track_idx, anim.length)
 	return start.distance_to(end) / anim.length
+
+func _get_paint_areas(mesh_list: Array[Mesh]) -> PackedByteArray:
+	var areas: PackedByteArray
+	for mesh in mesh_list:
+		for surf_idx in mesh.get_surface_count():
+			var arrays := mesh.surface_get_arrays(surf_idx)
+			var colors := arrays[Mesh.ArrayType.ARRAY_COLOR] as PackedColorArray
+			for color in colors:
+				if color.a8 != 0xFF && color.a8 not in areas:
+					areas.append(color.a8)
+	
+	areas.sort()
+	return areas
