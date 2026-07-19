@@ -51,12 +51,15 @@ func set_paint_colors(colors: PackedColorArray) -> void:
 		push_error("Cannot set mech paint colors, need %d colors" % BBMechConfig.paint_area_count)
 		return
 	
+	# Do not modify the original array
+	var paint_colors := colors.duplicate()
+	
 	# All colors must be opaque
 	for i in BBMechConfig.paint_area_count:
-		colors[i].a = 1.0
+		paint_colors[i].a = 1.0
 	
-	colors.append(Color.TRANSPARENT) # Final color must be transparent
-	mech_material.set_shader_parameter("paint_colors", colors)
+	paint_colors.append(Color.TRANSPARENT) # Final color must be transparent
+	mech_material.set_shader_parameter("paint_colors", paint_colors)
 
 func is_paint_applied() -> bool:
 	var paint_colors := mech_material.get_shader_parameter("paint_colors")
