@@ -45,7 +45,7 @@ func _set_current_stage(new_stage: int) -> void:
 	sun.visible = !stage.world_light.is_equal_approx(Color.BLACK)
 	sun.rotation = Vector3(-stage.shadow_pitch, stage.shadow_yaw, 0.0)
 	sun.shadow_enabled = stage.draw_shadows
-	sun.directional_shadow_max_distance = stage.shadow_end
+	sun.directional_shadow_max_distance = stage.fog_end # stage.shadow_end
 	
 	environment.ambient_light_color = stage.world_ambient
 	environment.ambient_light_energy = 0.0 if stage.world_ambient.is_equal_approx(Color.BLACK) else stage.world_ambient.a
