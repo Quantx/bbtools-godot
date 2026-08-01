@@ -159,7 +159,7 @@ func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) 
 	
 	return mission_object_count
 
-func _import_ground(file : FileAccess, base_path: String, environment: Environment, mission: Node):
+func _import_ground(file: FileAccess, base_path: String, environment: Environment, mission: BBMission):
 	var sky_mode := file.get_8()
 	var sky_texture_paths: PackedStringArray
 	match sky_mode:
@@ -201,7 +201,7 @@ func _import_ground(file : FileAccess, base_path: String, environment: Environme
 		if quads_data.get_layer(i) == 0:
 			terrain_heights[i] = NAN
 	
-	var water_heights := file.get_buffer(length * 4).to_float32_array()
+	var water_heights = file.get_buffer(length * 4).to_float32_array()
 	
 	var sky_scale := Vector2(5000.0, 5000.0)
 	
@@ -296,6 +296,9 @@ func _import_ground(file : FileAccess, base_path: String, environment: Environme
 		mission.add_child(water)
 		water.owner = mission
 		mission.water = water
+		
+		mission.water_size = size
+		mission.water_heights = water_heights
 
 func _set_cloud_mat_params(clouds: ShaderMaterial, mode: int, scale: Vector2, sky_texture_paths: PackedStringArray) -> void:
 	clouds.set_shader_parameter("sky_mode", mode)

@@ -21,6 +21,7 @@ class_name BBMission extends Node3D
 @export var water: MeshInstance3D
 @export var environment: Environment
 
+@export var water_size: Vector2i
 @export var water_heights: PackedFloat32Array
 
 @export var object_material: Material
@@ -78,8 +79,41 @@ func _set_cloud_mat_params(clouds: ShaderMaterial, stage: BBStage) -> void:
 	clouds.set_shader_parameter("fog_start", stage.sky_fog_start)
 	clouds.set_shader_parameter("fog_end", stage.sky_fog_end)
 
-func get_water_height() -> float:
-	if !water || !water.visible:
+func get_water_height(x: int, y: int) -> float:
+	return water_heights[y * water_size.x + x]
+
+func sample_water_height(global_pos: Vector3) -> float:
+	if water_heights.is_empty():
 		return -INF
 	
-	return water.global_position.y
+	var pos := water.to_local(global_pos)
+	pos.x += water_size.x / 2
+	pos.z += water_size.y / 2
+	
+	if pos.x < 0 || pos.x >= water_size.x || pos.y < 0 || pos.y >= water_size.y:
+		return -INF
+	
+	var p0 := Vector2i(pos.x, pos.z)
+	var p1 := p0 + Vector2i.ONE
+	
+	var h0 = get_water_height(p0.x, p0.y); # bl
+	var h1 = get_water_height(p1.x, p0.y); # br
+	var h2 = get_water_height(p0.x, p1.y); # tl
+	var h3 = get_water_height(p1.x, p1.y); # tr
+	
+	var frac := pos - pos.floor()
+	
+	var height: float
+	if frac.x + frac.y < 1.0:
+		var hx = (h1 - h0) * frac.x
+		var hy = (h2 - h0) * frac.y
+		height = h0 + hx + hy
+	else:
+		var hx = (h2 - h3) * (1.0 - frac.x)
+		var hy = (h1 - h3) * (1.0 - frac.y)
+		height = h3 + hx + hy
+	
+	if is_nan(height):
+		height = -INF
+	
+	return height * water.scale.y
