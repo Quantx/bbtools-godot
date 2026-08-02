@@ -77,6 +77,31 @@ func _import_scene(mission_path: String, _flags: int, _options: Dictionary) -> N
 		mission.free()
 		return null
 	
+	for base_object in mission.spawns_conquest:
+		mission.spawns_conquest_team.append(base_object.team_id)
+	
+	var flag_team0_spawn_idx := mission_file.get_8()
+	mission.flag_team0_spawn = mission.spawns_ctf[flag_team0_spawn_idx]
+	
+	var flag_team1_spawn_idx := mission_file.get_8()
+	mission.flag_team1_spawn = mission.spawns_ctf[flag_team1_spawn_idx]
+	
+	mission.spawns_ctf_team = mission_file.get_buffer(12)
+	assert(mission.spawns_ctf.size() <= 12)
+	mission.spawns_ctf_team.resize(mission.spawns_ctf.size())
+	
+	var objects := mission.get_node("Objects")
+	mission.flag_neutral_spawn = objects.get_node_or_null("F14_0") as BBObject
+	
+	mission.flag_team0 = objects.get_node("KONT_A_0") as BBObject
+	mission.flag_team1 = objects.get_node("KONT_B_0") as BBObject
+	mission.flag_neutral = objects.get_node_or_null("F15_0") as BBObject
+	
+	mission.flag_team0.position = mission.flag_team0_spawn.position - Vector3(0, 10.0, 0)
+	mission.flag_team1.position = mission.flag_team1_spawn.position - Vector3(0, 10.0, 0)
+	if mission.flag_neutral && mission.flag_neutral_spawn:
+		mission.flag_neutral.position = mission.flag_neutral_spawn.position - Vector3(0, 10.0, 0)
+	
 	var start_pos := Vector3(mission_file.get_float(), mission_file.get_float(), mission_file.get_float())
 	var start_yaw := mission_file.get_float()
 	if !is_nan(start_pos.x + start_pos.y + start_pos.z + start_yaw):
@@ -106,7 +131,7 @@ func _import_scene(mission_path: String, _flags: int, _options: Dictionary) -> N
 	
 	return mission
 
-func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) -> int:
+func _import_objects(file: FileAccess, mission: BBMission) -> int:
 	var object_root := Node3D.new()
 	object_root.name = "Objects"
 	
@@ -115,27 +140,24 @@ func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) 
 	
 	var object_counts: Dictionary[int,int] = {}
 	
+	var object_script := load("res://addons/bbtools/mission/scene/object.gd") as Script
+	
 	var mission_object_count := file.get_32()
 	for i in mission_object_count:
 		var model_path := file.get_pascal_string()
 		var model_name = model_path.get_file().get_slice(".", 0)
 		
-		var object: BBObject
-		if full_import:
-			var model_scene := load(model_path) as PackedScene
-			var model := model_scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
-			
-			# This fixes an import issue, doesn't actually affect the scene itself
-			var anim_player := model.get_node_or_null(^"AnimationPlayer") as AnimationPlayer
-			if anim_player:
-				model.remove_child(anim_player)
-				anim_player.queue_free()
-			
-			model.set_script(load("res://addons/bbtools/mission/scene/object.gd"))
-			object = model as BBObject
-		else:
-			object = BBObject.new()
-			object.scene_file_path = model_path
+		var model_scene := load(model_path) as PackedScene
+		var model := model_scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+		
+		# This fixes an import issue, doesn't actually affect the scene itself
+		var anim_player := model.get_node_or_null(^"AnimationPlayer") as AnimationPlayer
+		if anim_player:
+			model.remove_child(anim_player)
+			anim_player.queue_free()
+		
+		model.set_script(object_script)
+		var object := model as BBObject
 		
 		object.life = file.get_16()
 		object.id = file.get_16()
@@ -156,6 +178,48 @@ func _import_objects(file: FileAccess, mission: Node, full_import: bool = true) 
 		
 		object_root.add_child(object)
 		object.owner = mission
+		
+		if object.id == 1184:
+			mission.spawns_deathmatch.append(object)
+		
+		if object.flags & BBObject.Flags.ConquestSpawn:
+			assert(object.spawn_index != INT16_MAX)
+			if mission.spawns_conquest.size() <= object.spawn_index:
+				mission.spawns_conquest.resize(object.spawn_index + 1)
+				mission.spawns_ctf.resize(object.spawn_index + 1)
+			
+			assert(mission.spawns_conquest[object.spawn_index] == null)
+			mission.spawns_conquest[object.spawn_index] = object
+			
+			if object.id == 954: # Convert to F01 (936)
+				var base_model_path := load("res://proprietary/loc/models/F01.gltf") as PackedScene
+				var base_model := base_model_path.instantiate()
+				
+				base_model.set_script(object_script)
+				var base_object := base_model as BBObject
+				
+				base_object.life = object.life
+				base_object.id = 936
+				
+				base_object.flags = object.flags
+				
+				base_object.team_id = object.team_id
+				base_object.ticket_value = object.ticket_value
+				base_object.spawn_index = object.spawn_index
+				
+				base_object.transform = object.transform
+				
+				# Give each object a unique name based on the number of times it's ID appears
+				var base_object_idx := object_counts.get_or_add(base_object.id, 0)
+				base_object.name = "F01_%d" % base_object_idx
+				object_counts[base_object.id] += 1
+				
+				object_root.add_child(base_object)
+				base_object.owner = mission
+				
+				mission.spawns_ctf[base_object.spawn_index] = base_object
+			else:
+				mission.spawns_ctf[object.spawn_index] = object
 	
 	return mission_object_count
 

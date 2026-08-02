@@ -24,6 +24,26 @@ class_name BBMission extends Node3D
 @export var water_size: Vector2i
 @export var water_heights: PackedFloat32Array
 
+## An array of spawnpoints for each gamemode
+@export var spawns_conquest: Array[BBObject]
+@export var spawns_deathmatch: Array[BBObject]
+@export var spawns_ctf: Array[BBObject]
+
+## Each entry correspons to a conquest_spawn and contains the initial team for that spawn
+@export var spawns_conquest_team: PackedByteArray
+
+## Each entry correspons to a ctf_spawn and contains the initial team for that spawn
+@export var spawns_ctf_team: PackedByteArray
+
+## The spawnpoint for the flag itself for each team
+@export var flag_team0_spawn: BBObject
+@export var flag_team1_spawn: BBObject
+@export var flag_neutral_spawn: BBObject
+
+@export var flag_team0: BBObject
+@export var flag_team1: BBObject
+@export var flag_neutral: BBObject
+
 @export var object_material: Material
 func _ready() -> void:
 	if object_material:
