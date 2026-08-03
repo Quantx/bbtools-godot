@@ -434,13 +434,28 @@ func set_fall(fall_node: StringName) -> void:
 	var fall_playback := chassis_anim_tree.get("parameters/Fall/playback") as AnimationNodeStateMachinePlayback
 	fall_playback.travel(fall_node)
 
+func set_death(death_node: StringName) -> void:
+	var movement_playback := chassis_anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
+	movement_playback.travel(&"Death")
+	
+	var death_playback := chassis_anim_tree.get("parameters/Death/playback") as AnimationNodeStateMachinePlayback
+	death_playback.travel(death_node)
+
 func is_standing() -> bool:
 	var movement_playback := chassis_anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
 	return movement_playback.get_current_node() != &"Fall"
 
+func is_rising() -> bool:
+	var fall_playback := chassis_anim_tree.get("parameters/Fall/playback") as AnimationNodeStateMachinePlayback
+	return fall_playback.get_current_node() == &"RiseFront" || fall_playback.get_current_node() == &"RiseBack"
+
 func is_deployed() -> bool:
 	var deploy_playback := chassis_anim_tree.get("parameters/Deploy/playback") as AnimationNodeStateMachinePlayback
 	return deploy_playback.get_current_node() == &"Idle"
+
+func is_dying() -> bool:
+	var movement_playback := chassis_anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
+	return movement_playback.get_current_node() != &"Death"
 #endregion
 
 #region equiptment

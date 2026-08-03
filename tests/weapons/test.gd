@@ -21,6 +21,7 @@ const swep_directory := "res://proprietary/loc/weapons/sub/"
 @onready var movement_text := $TopRight/MovementText as LineEdit
 @onready var slide_text := $TopRight/SlideText as LineEdit
 @onready var fall_text := $TopRight/FallText as LineEdit
+@onready var death_text := $TopRight/DeathText as LineEdit
 
 var mech: BBMech
 
@@ -173,6 +174,12 @@ func _on_fall_switch_pressed() -> void:
 		return
 	
 	mech.set_fall(fall_text.text)
+
+func _on_death_switch_pressed() -> void:
+	if !mech:
+		return
+	
+	mech.set_death(death_text.text)
 
 func _on_rising_toggled(toggled_on: bool) -> void:
 	if !mech:

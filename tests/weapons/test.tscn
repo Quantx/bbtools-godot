@@ -161,6 +161,14 @@ placeholder_text = "Fall Node"
 layout_mode = 2
 text = "Fall Switch"
 
+[node name="DeathText" type="LineEdit" parent="TopRight" unique_id=1760589439]
+layout_mode = 2
+placeholder_text = "Death Node"
+
+[node name="DeathSwitch" type="Button" parent="TopRight" unique_id=1194953514]
+layout_mode = 2
+text = "Death Switch"
+
 [node name="Deployed" type="CheckBox" parent="TopRight" unique_id=270339553]
 layout_mode = 2
 text = "Deployed"
@@ -194,6 +202,7 @@ text = "Drop Armor"
 [connection signal="pressed" from="TopRight/MovementSwitch" to="." method="_on_movement_switch_pressed"]
 [connection signal="pressed" from="TopRight/SlideSwitch" to="." method="_on_slide_switch_pressed"]
 [connection signal="pressed" from="TopRight/FallSwitch" to="." method="_on_fall_switch_pressed"]
+[connection signal="pressed" from="TopRight/DeathSwitch" to="." method="_on_death_switch_pressed"]
 [connection signal="toggled" from="TopRight/Deployed" to="." method="_on_deployed_toggled"]
 [connection signal="toggled" from="TopRight/Rising" to="." method="_on_rising_toggled"]
 [connection signal="toggled" from="TopRight/Hatch" to="." method="_on_hatch_toggled"]
