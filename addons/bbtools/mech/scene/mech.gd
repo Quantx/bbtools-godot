@@ -137,6 +137,9 @@ func set_mesh_idx(new_idx: int) -> void:
 @export var swep_attachments_shoulder: Array[Marker3D] # Size 2
 @export var mwep_attachments: Array[Marker3D] # Size 4
 
+@export var foot_right: Marker3D
+@export var foot_left: Marker3D
+
 @export var muzzle_bones: PackedStringArray
 @export var muzzles: Array[Marker3D]
 
@@ -151,6 +154,8 @@ var swep_idx: int
 
 var hatch_closed: bool
 var manipulator_deployed: bool
+
+var eye_effect: BBEffect
 
 func _ready() -> void:
 	# Setup Mesh Instances
@@ -201,7 +206,9 @@ func _ready() -> void:
 			"attach_bone": get_special(Bones.MainCam)
 		}
 		
-		BBEffectManager.spawn(eye_effect_config, eye_effect_args, self)
+		var eye_effects := BBEffectManager.spawn(eye_effect_config, eye_effect_args, self)
+		assert(eye_effects.size() == 1)
+		eye_effect = eye_effects[0]
 
 func spawn_movement_collider() -> CollisionShape3D:
 	var collision_shape := CollisionShape3D.new()
@@ -234,6 +241,9 @@ func _on_skeleton_updated(skeleton: Skeleton3D) -> void:
 	
 	_update_attach_transform(swep_attachments_shoulder[0], skeleton, Bones.SwepLeft)
 	_update_attach_transform(swep_attachments_shoulder[1], skeleton, Bones.SwepRight)
+	
+	_update_attach_transform(foot_right, skeleton, Bones.FootRight)
+	_update_attach_transform(foot_left, skeleton, Bones.FootLeft)
 
 func _on_swep_box_skeleton_update(skeleton: Skeleton3D) -> void:
 	if !skeleton.is_inside_tree():
@@ -487,7 +497,7 @@ func set_torso_rotation_y(angle: float) -> void:
 	chassis_skel_mod.torso_rotation_y = angle
 #endregion
 
-func get_projectile_hit_effect_args(bone_idx: int = -1) -> Dictionary:
+func get_random_bone_effect_args(bone_idx: int = -1) -> Dictionary:
 	const hit_bones: PackedInt32Array = [
 		Bones.Torso,		# special_0
 		Bones.MwepRight,	# special_1
@@ -517,3 +527,37 @@ func get_projectile_hit_effect_args(bone_idx: int = -1) -> Dictionary:
 		"attach_bone": get_special(hit_bones[bone_idx]),
 		"detach_delay": 0.0,
 	}
+
+var _burning_effects: Array[BBEffect]
+@export var burning_effect_distance: float
+func spawn_burning_effects() -> void:
+	var chassis_skeleton := chassis.get_node(^"Skeleton3D") as Skeleton3D
+	
+	# Main Camera effects
+	var main_cam_fire_effect_args := {
+		"attach_node": chassis_skeleton,
+		"attach_bone": get_special(Bones.MainCam),
+	}
+	
+	var main_cam_fire_effect_config := load("res://proprietary/loc/effects/effects/EFG1001.efg") as BBEffectConfigGroup # IDX 52
+	var main_cam_fire_effects := BBEffectManager.spawn(main_cam_fire_effect_config, main_cam_fire_effect_args)
+	_burning_effects.append_array(main_cam_fire_effects)
+	
+	# Torso effects
+	var torso_fire_effect_args := {
+		"attach_node": chassis_skeleton,
+		"attach_bone": get_special(Bones.Torso),
+	}
+	
+	var torso_fire_effect_config := load("res://proprietary/loc/effects/effects/EFG1013.efg") as BBEffectConfigGroup # IDX 64
+	for i in int(burning_effect_distance * 0.5):
+		torso_fire_effect_args.position = Vector3.FORWARD * (burning_effect_distance * randf())
+		var torso_fire_effects := BBEffectManager.spawn(torso_fire_effect_config, torso_fire_effect_args)
+		_burning_effects.append_array(torso_fire_effects)
+
+func remove_burning_effects() -> void:
+	for effect in _burning_effects:
+		if is_instance_valid(effect):
+			effect.remove()
+	
+	_burning_effects.clear()

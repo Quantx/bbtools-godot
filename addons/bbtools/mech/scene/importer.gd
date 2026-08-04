@@ -110,7 +110,15 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 	
 	mech.swep_attachments_box = _create_marker("SWepAttachmentBox", mech)
 	
+	mech.foot_right = _create_marker("FootRight", mech)
+	mech.foot_left = _create_marker("FootLeft", mech)
+	
 	var chassis_skeleton := mech.chassis.get_node(^"Skeleton3D") as Skeleton3D
+	
+	# Compute burning effect distance
+	var torso_position := chassis_skeleton.get_bone_rest(chassis_skeleton.find_bone(BBMech.get_special(BBMech.Bones.Torso))).origin
+	var swep_box_position := chassis_skeleton.get_bone_rest(chassis_skeleton.find_bone(BBMech.get_special(BBMech.Bones.SwepBox))).origin
+	mech.burning_effect_distance = torso_position.distance_to(swep_box_position) * 0.5
 	
 	var chassis_skel_mod := BBSkeletonModiferChassis.new()
 	chassis_skel_mod.name = "ChassisSkeletonModifier"

@@ -45,6 +45,7 @@ const buffer_size := 20
 var buffer: PackedFloat32Array
 
 var enabled: bool = true
+var _removed: bool = false
 
 var attach_node: Node3D
 var attach_transform := Transform3D.IDENTITY
@@ -197,4 +198,7 @@ func is_visible() -> bool:
 	return timer >= 0 && enabled
 
 func is_done() -> bool:
-	return timer >= life || (is_owned && !is_instance_valid(owner)) || (config.is_2D() && get_sequence_frame().type == BBEffectSequence.FrameType.Exit)
+	return timer >= life || (config.is_2D() && get_sequence_frame().type == BBEffectSequence.FrameType.Exit) || _removed || (is_owned && !is_instance_valid(owner))
+
+func remove() -> void:
+	_removed = true
