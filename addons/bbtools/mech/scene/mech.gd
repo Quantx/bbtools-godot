@@ -155,7 +155,7 @@ var swep_idx: int
 var hatch_closed: bool
 var manipulator_deployed: bool
 
-var eye_effect: BBEffect
+var _eye_effects: Array[BBEffect]
 
 func _ready() -> void:
 	# Setup Mesh Instances
@@ -206,9 +206,7 @@ func _ready() -> void:
 			"attach_bone": get_special(Bones.MainCam)
 		}
 		
-		var eye_effects := BBEffectManager.spawn(eye_effect_config, eye_effect_args, self)
-		assert(eye_effects.size() == 1)
-		eye_effect = eye_effects[0]
+		_eye_effects = BBEffectManager.spawn(eye_effect_config, eye_effect_args, self)
 
 func spawn_movement_collider() -> CollisionShape3D:
 	var collision_shape := CollisionShape3D.new()
@@ -561,3 +559,8 @@ func remove_burning_effects() -> void:
 			effect.remove()
 	
 	_burning_effects.clear()
+
+func set_eye_effect_enabled(enabled: bool) -> void:
+	for effect in _eye_effects:
+		if is_instance_valid(effect):
+			effect.enabled = enabled
