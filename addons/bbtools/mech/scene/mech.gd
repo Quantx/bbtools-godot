@@ -208,13 +208,6 @@ func _ready() -> void:
 		
 		_eye_effects = BBEffectManager.spawn(eye_effect_config, eye_effect_args, self)
 
-func spawn_movement_collider() -> CollisionShape3D:
-	var collision_shape := CollisionShape3D.new()
-	collision_shape.name = "MovementCollider"
-	collision_shape.shape = movement_collider_shape
-	collision_shape.position = movement_collider_offset
-	return collision_shape
-
 # Called by both chassis & hatch skeleton
 func _on_skeleton_updated(skeleton: Skeleton3D) -> void:
 	_update_attach_transform(hatch, skeleton, Bones.Cockpit)
