@@ -86,10 +86,12 @@ var max_speeds_override: PackedFloat32Array
 @export var loadout_weight_standard: int
 @export var loadout_weight_max: int
 
+const mwep_slot_count := 3
 @export var loadout_mweps_configs: Array[BBWeaponConfig]
 @export var loadout_mweps_presets: PackedInt32Array
 @export var loadout_mweps_fixed: PackedByteArray
 
+const swep_slot_count := 3
 @export var loadout_sweps_configs: Array[BBWeaponConfig]
 @export var loadout_sweps_presets: PackedInt32Array # Indices into swep arrays
 @export var loadout_sweps_fixed: PackedByteArray
