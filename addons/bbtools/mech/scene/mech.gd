@@ -420,6 +420,13 @@ func set_movement(movement_node: StringName, speed_ms: float = -1.0) -> void:
 	var movement_playback := chassis_anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
 	movement_playback.travel(movement_node)
 
+func set_turning(turn_scale: float) -> void:
+	turn_scale = clampf(turn_scale, -1.0, 1.0)
+	
+	chassis_anim_tree.set("parameters/Turn/TimeScale/scale", scale)
+	var movement_playback := chassis_anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
+	movement_playback.travel(&"Turn")
+
 func set_slide(slide_node: StringName) -> void:
 	var movement_playback := chassis_anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
 	movement_playback.travel(&"Slide")
