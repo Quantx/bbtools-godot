@@ -261,7 +261,7 @@ func _add_effects_track(state: GLTFState, mirrored: bool, data: PackedByteArray,
 				trans_rotation.z = -trans_rotation.z
 			
 			var effect_args := {
-				"bone": gltf_node.original_name,
+				"attach_bone": gltf_node.original_name,
 				"detach_delay": detach_delay,
 				"position": position,
 			}

@@ -201,6 +201,7 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 	mech.chassis_anim_tree = _create_animation_tree(mech, mech.chassis)
 	mech.chassis_anim_tree.tree_root = load("res://addons/bbtools/mech/anim_state_machines/chassis.tres") as AnimationNodeStateMachine
 	mech.chassis_anim_tree.root_motion_track = ^"Skeleton3D:0"
+	mech.chassis_anim_tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	
 	mech.hatch_anim_tree = _create_animation_tree(mech, mech.hatch)
 	mech.hatch_anim_tree.tree_root = load("res://addons/bbtools/mech/anim_state_machines/hatch.tres") as AnimationNodeStateMachine

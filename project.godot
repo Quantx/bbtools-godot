@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="BBTools"
-run/main_scene="uid://c36diq4kirmtl"
+run/main_scene="uid://kqbwgvb74hvj"
 config/features=PackedStringArray("4.8", "Forward Plus")
 
 [autoload]

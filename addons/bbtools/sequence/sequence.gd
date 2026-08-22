@@ -43,11 +43,8 @@ func on_mixer_applied() -> void:
 	_flags_one_shot = false
 
 func _spawn_effect(args: Dictionary) -> void:
-	var bone_idx := skeleton.find_bone(args.bone)
+	var bone_idx := skeleton.find_bone(args.attach_bone as String)
 	assert(bone_idx >= 0)
-	
-	var attach_path := NodePath("%s:%s" % [skeleton.get_path(), args.bone])
-	args.attach_path = attach_path
 	
 	var effect_config := args.get("effect", null) as BBEffectConfigGroup
 	
@@ -73,4 +70,5 @@ func _spawn_effect(args: Dictionary) -> void:
 			effect_config = BBEffectManager.load_surface(args.surface_idx as int, surface, surface_effects)
 	
 	if effect_config:
+		args.attach_node = skeleton
 		BBEffectManager.spawn(effect_config, args, self)
