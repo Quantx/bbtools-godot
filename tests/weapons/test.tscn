@@ -143,13 +143,14 @@ allow_reselect = true
 
 [node name="MovementSpeed" type="SpinBox" parent="TopRight" unique_id=100540136]
 layout_mode = 2
+value = 20.0
 suffix = "km/h"
 
 [node name="MovementTurn" type="HSlider" parent="TopRight" unique_id=872739748]
 layout_mode = 2
-min_value = -1.0
 max_value = 1.0
 step = 0.1
+value = 1.0
 
 [node name="Teleport" type="CheckBox" parent="TopRight" unique_id=128584673]
 layout_mode = 2
@@ -178,8 +179,6 @@ text = "Drop Armor"
 [connection signal="pressed" from="TopLeft/SWepFire" to="." method="_on_swep_fire_pressed"]
 [connection signal="pressed" from="TopLeft/ProjectileFreeze" to="." method="_on_projectile_freeze_pressed"]
 [connection signal="item_selected" from="TopRight/MovementState" to="." method="_on_movement_state_item_selected"]
-[connection signal="value_changed" from="TopRight/MovementSpeed" to="." method="_on_movement_speed_value_changed"]
-[connection signal="value_changed" from="TopRight/MovementTurn" to="." method="_on_movement_turn_value_changed"]
 [connection signal="toggled" from="TopRight/Hatch" to="." method="_on_hatch_toggled"]
 [connection signal="pressed" from="TopRight/DropLeftTank" to="." method="_on_drop_left_tank_pressed"]
 [connection signal="pressed" from="TopRight/DropRightTank" to="." method="_on_drop_right_tank_pressed"]

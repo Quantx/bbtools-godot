@@ -192,16 +192,20 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 		mech.mwep_attachments.append(_create_marker("MWepAttachment%d" % i, mech))
 	
 	# Compute Movement Animation Velocities
-	var chassis_anim_player := mech.chassis.get_node(^"AnimationPlayer") as AnimationPlayer
-	mech.movement_anim_speeds[&"Walk"] = _get_root_motion_velocity(chassis_anim_player, &"Anim_1")
-	mech.movement_anim_speeds[&"Run"] = _get_root_motion_velocity(chassis_anim_player, &"Anim_2")
-	mech.movement_anim_speeds[&"Reverse"] = _get_root_motion_velocity(chassis_anim_player, &"Anim_4")
+	mech.chassis_anim_player = mech.chassis.get_node(^"AnimationPlayer") as AnimationPlayer
+	mech.chassis_anim_player.autoplay = &"Anim_0" # Idle animation
+	mech.chassis_anim_player.root_motion_track = ^"Skeleton3D:0"
+	mech.chassis_anim_player.playback_default_blend_time = 0.2
+	
+	mech.chassis_root_motion_speeds[1] = _get_root_motion_speed(mech.chassis_anim_player, &"Anim_1")
+	mech.chassis_root_motion_speeds[2] = _get_root_motion_speed(mech.chassis_anim_player, &"Anim_2")
+	mech.chassis_root_motion_speeds[4] = _get_root_motion_speed(mech.chassis_anim_player, &"Anim_4")
 	
 	# Create Animation Trees
-	mech.chassis_anim_tree = _create_animation_tree(mech, mech.chassis)
-	mech.chassis_anim_tree.tree_root = load("res://addons/bbtools/mech/anim_state_machines/chassis.tres") as AnimationNodeStateMachine
-	mech.chassis_anim_tree.root_motion_track = ^"Skeleton3D:0"
-	mech.chassis_anim_tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+	#mech.chassis_anim_tree = _create_animation_tree(mech, mech.chassis)
+	#mech.chassis_anim_tree.tree_root = load("res://addons/bbtools/mech/anim_state_machines/chassis.tres") as AnimationNodeStateMachine
+	#mech.chassis_anim_tree.root_motion_track = ^"Skeleton3D:0"
+	#mech.chassis_anim_tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	
 	mech.hatch_anim_tree = _create_animation_tree(mech, mech.hatch)
 	mech.hatch_anim_tree.tree_root = load("res://addons/bbtools/mech/anim_state_machines/hatch.tres") as AnimationNodeStateMachine
@@ -222,8 +226,7 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 	for n in mech.get_children():
 		var anim_player := n.get_node_or_null(^"AnimationPlayer") as AnimationPlayer
 		if anim_player:
-			n.remove_child(anim_player)
-			anim_player.queue_free()
+			anim_player.remove_animation_library(&"")
 	
 	return mech
 
@@ -266,7 +269,7 @@ func _create_animation_tree(root: Node, target: Node3D) -> AnimationTree:
 	
 	return anim_tree
 
-func _get_root_motion_velocity(anim_mixer: AnimationMixer, anim_name: StringName) -> float:
+func _get_root_motion_speed(anim_mixer: AnimationMixer, anim_name: StringName) -> float:
 	var anim := anim_mixer.get_animation(anim_name)
 	if !anim:
 		push_error("Failed to get animation: %s" % anim_name)

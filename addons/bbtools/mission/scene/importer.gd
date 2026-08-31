@@ -153,8 +153,7 @@ func _import_objects(file: FileAccess, mission: BBMission) -> int:
 		# This fixes an import issue, doesn't actually affect the scene itself
 		var anim_player := model.get_node_or_null(^"AnimationPlayer") as AnimationPlayer
 		if anim_player:
-			model.remove_child(anim_player)
-			anim_player.queue_free()
+			anim_player.remove_animation_library(&"")
 		
 		model.set_script(object_script)
 		var object := model as BBObject

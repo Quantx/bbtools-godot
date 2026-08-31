@@ -364,8 +364,7 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 		for n in root.get_children():
 			var anim_player := n.get_node_or_null(^"AnimationPlayer") as AnimationPlayer
 			if anim_player:
-				n.remove_child(anim_player)
-				anim_player.queue_free()
+				anim_player.remove_animation_library(&"")
 	
 	return cockpit
 
