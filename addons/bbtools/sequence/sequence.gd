@@ -58,7 +58,8 @@ func _spawn_effect(args: Dictionary) -> void:
 		
 		var exclude: Array[RID]
 		for n in raycast_excludes:
-			exclude.append(n.get_rid())
+			if is_instance_valid(n):
+				exclude.append(n.get_rid())
 		
 		var mask : int = 0x1 | 0x10 # Terrain and World Physics
 		var query := PhysicsRayQueryParameters3D.create(from, to, mask, exclude)

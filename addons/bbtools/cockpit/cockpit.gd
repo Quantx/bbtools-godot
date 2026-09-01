@@ -201,7 +201,7 @@ func select_pose(index: int) -> void:
 	
 	# This works even if the distance is zero
 	var distance := _camera_pose_distance()
-	_pose_camera_switch_distance_reciprocal = 0.0 if is_zero_approx(distance) else 1.0 / distance
+	_pose_camera_switch_distance_reciprocal = 0.0 if is_zero_approx(distance) else (1.0 / distance)
 	_pose_camera_switch_rotation = pilot_camera.quaternion
 
 func _on_pilot_eject_skeleton_updated(skeleton: Skeleton3D) -> void:
@@ -210,6 +210,7 @@ func _on_pilot_eject_skeleton_updated(skeleton: Skeleton3D) -> void:
 
 func _tuner_anim_state_started(state: StringName) -> void:
 	if !state.begins_with("Down") && !state.begins_with("Up"):
+		tuner_index_current = -1
 		return
 	
 	var index_string := state.get_slice(" ", 1)
