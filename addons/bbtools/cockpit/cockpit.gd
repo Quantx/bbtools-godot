@@ -1,7 +1,7 @@
 class_name BBCockpit extends Node3D
 
 @export var chassis_textures: Array[Texture2D]
-@export var display_textures: Array[Texture3D]
+@export var display_textures: Array[Texture2D]
 
 @export var chassis_material: StandardMaterial3D
 @export var display_material: ShaderMaterial
@@ -225,6 +225,12 @@ func eject() -> void:
 
 func set_background_texture(texture: Texture2D) -> void:
 	background_material.set_shader_parameter("background_albedo", texture)
+
+func set_display_texture(texture: Texture2D) -> void:
+	display_material.set_shader_parameter("albedo_texture", texture)
+
+func set_display_override_color(color: Color) -> void:
+	display_material.set_shader_parameter("override_color", color)
 
 func _on_hatch_changed() -> void:
 	background.visible = lighting.hatch_open

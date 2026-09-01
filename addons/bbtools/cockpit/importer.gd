@@ -103,7 +103,7 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 	
 	for i in 2:
 		var display_texture_path := file.get_pascal_string()
-		cockpit.display_textures.append(load(display_texture_path) as Texture3D)
+		cockpit.display_textures.append(load(display_texture_path) as Texture2D)
 	
 	var display_material := ShaderMaterial.new()
 	display_material.shader = load("res://addons/bbtools/cockpit/shaders/display.gdshader") as Shader
