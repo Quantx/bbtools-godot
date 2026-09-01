@@ -6,22 +6,22 @@ class_name BBBootPlayer extends Node2D
 @export var line_antialias: bool = false
 
 @export var strings_overrides: Dictionary[int,String]
-var _strings: PackedStringArray
 
 var time: float:
 	set = set_time
 
 func set_time(t: float) -> void:
+	if !boot:
+		time = 0.0
+	
 	t = clampf(t, 0.0, boot.duration)
 	if t != time:
 		queue_redraw()
 		time = t
 
-func _ready() -> void:
-	_strings = boot.get_strings()
-
 func _draw_text(draw: BBBootDrawText) -> void:
-	var string := String(strings_overrides.get(draw.string_idx, _strings[draw.string_idx]))
+	var boot_strings := boot.get_strings()
+	var string := String(strings_overrides.get(draw.string_idx, boot_strings[draw.string_idx]))
 	
 	var draw_length := mini(draw.string_length, string.length()) if draw.string_length >= 0 else string.length()
 	var draw_position := draw.position
@@ -204,6 +204,9 @@ func _draw_lines_def(draw: BBBootDrawLinesDef) -> void:
 	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 func _draw() -> void:
+	if !boot:
+		return
+	
 	for draw in boot.draws:
 		if draw is BBBootDrawText:
 			_draw_text(draw as BBBootDrawText)
