@@ -12,5 +12,5 @@ class_name BBSprite extends Resource
 @export var pallete_idx: int = -1
 @export var color: Color
 
-func get_frame() -> BBSpriteSheet.Frame:
-	return spritesheet.frames[frame_idx]
+func get_texture_rect() -> Rect2:
+	return spritesheet.get_frame_texture_rect(spritesheet.frames[frame_idx])

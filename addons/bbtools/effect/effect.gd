@@ -108,7 +108,7 @@ func update(delta: float) -> void:
 		
 		assert(uv_scale.x < 1.0 && uv_scale.y < 1.0)
 		
-		uv_data = (uv_offset * config.spritesheet.get_size()).floor() + uv_scale
+		uv_data = (uv_offset * config.spritesheet.texture.get_size()).floor() + uv_scale
 		
 		var scale := initial_scale + (config.velocity.scale + (config.acceleration.scale * timer)) * timer
 		

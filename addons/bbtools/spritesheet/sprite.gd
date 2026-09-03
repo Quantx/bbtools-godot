@@ -16,26 +16,19 @@ class Frame extends Resource:
 		return image_region
 
 # Cockpit Display Textures are 3D
-@export var texture: Texture
+@export var texture: Texture2D
 @export var offset: Vector2
 @export var frames: Array[Frame]
 
-func get_size() -> Vector2:
-	if texture is Texture2D:
-		return (texture as Texture2D).get_size()
-	
-	if texture is Texture3D:
-		var tex_3D := texture as Texture3D
-		return Vector2(tex_3D.get_width(), tex_3D.get_height())
-	
-	push_error("Unknown texture format for BBSprite: ", texture)
-	return Vector2.ZERO
+func get_frame_texture_rect(frame: Frame) -> Rect2:
+	var region := frame.region
+	var texture_size := texture.get_size()
+	region.position *= texture_size
+	region.size *= texture_size
+	return region
 
 func frame_to_texture(frame: Frame) -> ImageTexture:
-	if texture is not Texture2D:
-		return null
-	
-	var src_image := (texture as Texture2D).get_image()
+	var src_image := texture.get_image()
 	if src_image.is_compressed():
 		var err := src_image.decompress()
 		if err != OK:

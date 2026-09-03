@@ -15,4 +15,5 @@ void fragment() {
 	
 	ALBEDO = mix(albedo.rgb, override_color.rgb, override_color.a);
 	ALPHA = albedo.a;
+	EMISSION = ALBEDO * ALPHA;
 }
