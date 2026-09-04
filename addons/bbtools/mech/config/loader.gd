@@ -81,6 +81,8 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	config.tank_capacity_main = file.get_float()
 	config.tank_capacity_sub = file.get_float()
 	
+	config.chaff = file.get_16()
+	
 	config.loadout_weight_max = file.get_8()
 	config.loadout_weight_standard = file.get_8()
 	

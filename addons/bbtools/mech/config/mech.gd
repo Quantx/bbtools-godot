@@ -82,6 +82,8 @@ var max_speeds_override: PackedFloat32Array
 @export var tank_capacity_main: float = 24000.0
 @export var tank_capacity_sub: float = 10000.0
 
+@export var chaff: int
+
 #region loadout
 @export var loadout_weight_standard: int
 @export var loadout_weight_max: int
