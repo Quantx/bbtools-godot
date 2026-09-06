@@ -1,4 +1,4 @@
-class_name BBBootSystems extends Resource
+class_name BBBootSwitches extends Resource
 
 @export var system_count: int
 
