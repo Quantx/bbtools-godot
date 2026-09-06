@@ -33,10 +33,25 @@ var monitor_multi_closed: bool
 @export var pilot_root: Node3D
 @export var pilot_eject: Node3D
 @export var pilot_camera: Camera3D
+@export var pilot_poser: Node3D
 @export var pilot_poses: Array[Marker3D]
-var _pose_index: int
-var _pose_camera_switch_distance_reciprocal: float
-var _pose_camera_switch_rotation: Quaternion
+var _poser_index: int
+var _poser_switch_distance_reciprocal: float
+var _poser_switch_rotation: Quaternion
+
+var _shake_timer: float
+
+var shake_buffered: float:
+	set(val):
+		shake_buffered = clampf(val, 0.0, 13.0)
+
+var shake_vertical: float:
+	set(val):
+		shake_vertical = clampf(val, 0.0, 13.0)
+
+var shake_unbuffered: float:
+	set(val):
+		shake_unbuffered = clampf(val, 0.0, 1.0)
 
 @export_group("Tuner")
 @export var tuner_root: Node3D
@@ -83,7 +98,7 @@ func reset() -> void:
 	
 	monitor_multi_closed = false
 	
-	_pose_index = 0
+	_poser_index = 0
 	
 	tuner_index_current = 0
 	tuner_index_target = 0
@@ -91,7 +106,7 @@ func reset() -> void:
 	comms_index = -1
 	
 	select_pose(0)
-	pilot_camera.transform = pilot_poses[0].transform
+	pilot_poser.transform = pilot_poses[0].transform
 	
 	# Reset all animation trees
 	for anim_tree in animation_trees:
@@ -181,13 +196,35 @@ func _ready() -> void:
 	reset()
 
 func _process(delta: float) -> void:
-	if !pilot_camera.position.is_equal_approx(pilot_poses[_pose_index].position):
-		pilot_camera.position = pilot_camera.position.move_toward(pilot_poses[_pose_index].position, delta)
-		var weight := _camera_pose_distance() * _pose_camera_switch_distance_reciprocal
-		pilot_camera.quaternion = pilot_poses[_pose_index].quaternion.slerp(_pose_camera_switch_rotation, weight)
+	if !pilot_poser.position.is_equal_approx(pilot_poses[_poser_index].position):
+		pilot_poser.position = pilot_poser.position.move_toward(pilot_poses[_poser_index].position, delta)
+		var weight := _camera_pose_distance() * _poser_switch_distance_reciprocal
+		pilot_poser.quaternion = pilot_poses[_poser_index].quaternion.slerp(_poser_switch_rotation, weight)
+	
+	var legacyTick := Time.get_ticks_msec() / 100.0
+	
+	#var buffer := (1.0 - mech.systems[Mech.SystemType.Buffer]) * 2.0 + 1.0
+	
+	if shake_unbuffered < 0.02:
+		_shake_timer = 22.0
+	else:
+		_shake_timer += 10.0 * delta
+	
+	#var shakeBuffered := clampf((mech.pilotShakeBuffered * 0.1 + mech.pilotShakeSight) * 10.0 * buffer, 0.0, 13.0)
+	#var shakeVertical := clampf(mech.pilotShakeBuffered * 10.0 * buffer, 0.0, 13.0)
+	#var shakeUnbuffered := clampf(mech.pilotShakeUnbuffered * 1.73, 0.0, 1.0)
+	#
+	var shake_position: Vector3
+	shake_position.x = sin(0.39 * legacyTick) * shake_buffered + cos(1.39 * _shake_timer) * shake_unbuffered
+	shake_position.y = sin(0.27 * legacyTick) * shake_buffered + sin(0.20 * _shake_timer) * shake_vertical + cos(legacyTick) * shake_unbuffered
+	shake_position.z = cos(1.24 * legacyTick) * shake_buffered + sin(0.70 * _shake_timer) * shake_unbuffered
+	
+	shake_position *= 0.002
+	
+	pilot_camera.position = shake_position
 
 func _camera_pose_distance() -> float:
-	return pilot_camera.position.distance_to(pilot_poses[_pose_index].position)
+	return pilot_poser.position.distance_to(pilot_poses[_poser_index].position)
 
 func select_pose(index: int) -> void:
 	if index < 0 || index >= pilot_poses.size():
@@ -197,12 +234,15 @@ func select_pose(index: int) -> void:
 	if ejecting:
 		return
 	
-	_pose_index = index
+	if _poser_index == index:
+		return
+	
+	_poser_index = index
 	
 	# This works even if the distance is zero
 	var distance := _camera_pose_distance()
-	_pose_camera_switch_distance_reciprocal = 0.0 if is_zero_approx(distance) else (1.0 / distance)
-	_pose_camera_switch_rotation = pilot_camera.quaternion
+	_poser_switch_distance_reciprocal = 0.0 if is_zero_approx(distance) else (1.0 / distance)
+	_poser_switch_rotation = pilot_poser.quaternion
 
 func _on_pilot_eject_skeleton_updated(skeleton: Skeleton3D) -> void:
 	var bone_idx := skeleton.find_bone("1")

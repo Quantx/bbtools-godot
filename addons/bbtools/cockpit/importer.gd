@@ -76,15 +76,23 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 	environment.fog_depth_begin = background_distance + 10.0
 	environment.fog_depth_end = background_distance + 20.0
 	
+	var poser := Node3D.new()
+	poser.name = "Poser"
+	poser.transform = cockpit.pilot_poses[0].transform
+	
+	pilot.add_child(poser)
+	poser.owner = cockpit
+	
+	cockpit.pilot_poser = poser
+	
 	var camera := Camera3D.new()
 	camera.name = "Camera"
 	camera.fov = 60.0
 	camera.cull_mask = 2
 	camera.far = 100.0
-	camera.transform = cockpit.pilot_poses[0].transform
 	camera.environment = environment
 	
-	pilot.add_child(camera)
+	poser.add_child(camera)
 	camera.owner = cockpit
 	
 	cockpit.pilot_camera = camera
