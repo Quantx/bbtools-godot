@@ -1,9 +1,56 @@
 [gd_scene format=3 uid="uid://baw6ipn5w5yet"]
 
-[ext_resource type="Script" uid="uid://bx6xljhrncjrs" path="res://addons/bbtools/os/boot/player.gd" id="1_582el"]
-[ext_resource type="Resource" uid="uid://cxe6pxollic2d" path="res://proprietary/loc/os/boot/gen3/Bootup_0.boot_anim" id="2_xgi81"]
+[ext_resource type="Script" uid="uid://bx6xljhrncjrs" path="res://addons/bbtools/os/boot/animation/player.gd" id="1_582el"]
+[ext_resource type="Script" uid="uid://b8grm6pj35aqi" path="res://tests/boot/test.gd" id="1_hikso"]
+[ext_resource type="Resource" uid="uid://cxe6pxollic2d" path="res://proprietary/loc/os/boot/gen3/Bootup_0.boot_anim" id="3_hikso"]
+[ext_resource type="Script" uid="uid://cjsw2c70w4lc8" path="res://addons/bbtools/os/boot/switches/player.gd" id="3_npuke"]
+[ext_resource type="Resource" uid="uid://c5w3rxffp18on" path="res://proprietary/loc/os/boot/gen3/Switches.boot_switches" id="5_1gwvb"]
 
-[node name="Test" type="Node2D" unique_id=1833153164]
+[node name="Boot" type="Node2D" unique_id=1605139507]
+script = ExtResource("1_hikso")
+
+[node name="BBBootPlayer" type="Node2D" parent="." unique_id=1833153164]
 script = ExtResource("1_582el")
-boot = ExtResource("2_xgi81")
+boot = ExtResource("3_hikso")
 metadata/_custom_type_script = "uid://bx6xljhrncjrs"
+
+[node name="BBSwitchesPlayer" type="Node2D" parent="." unique_id=1284711747]
+z_index = 1
+script = ExtResource("3_npuke")
+switches = ExtResource("5_1gwvb")
+error_blink_rate = 0.5
+metadata/_custom_type_script = "uid://cjsw2c70w4lc8"
+
+[node name="Systems" type="VBoxContainer" parent="." unique_id=1070965777]
+offset_right = 435.0
+offset_bottom = 96.0
+
+[node name="0" type="HSlider" parent="Systems" unique_id=1971538866]
+layout_mode = 2
+min_value = -0.1
+max_value = 1.0
+step = 0.01
+
+[node name="1" type="HSlider" parent="Systems" unique_id=1652581595]
+layout_mode = 2
+min_value = -0.1
+max_value = 1.0
+step = 0.01
+
+[node name="2" type="HSlider" parent="Systems" unique_id=1670197478]
+layout_mode = 2
+min_value = -0.1
+max_value = 1.0
+step = 0.01
+
+[node name="3" type="HSlider" parent="Systems" unique_id=1580613698]
+layout_mode = 2
+min_value = -0.1
+max_value = 1.0
+step = 0.01
+
+[node name="4" type="HSlider" parent="Systems" unique_id=2092139942]
+layout_mode = 2
+min_value = -0.1
+max_value = 1.0
+step = 0.01

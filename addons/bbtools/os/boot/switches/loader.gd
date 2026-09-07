@@ -11,25 +11,25 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	
 	var switches := BBBootSwitches.new()
 	
+	var font_path := file.get_pascal_string()
+	switches.font = load(font_path) as Font
+	
 	var system_count := file.get_32()
 	
 	switches.system_count = system_count
 	
-	switches.switch_error_color = Color(file.get_8(), file.get_8(), file.get_8(), file.get_8())
-	switches.switch_primary_color = Color(file.get_8(), file.get_8(), file.get_8(), file.get_8())
+	switches.error_color = Color.from_rgba8(file.get_8(), file.get_8(), file.get_8(), file.get_8())
+	switches.primary_color = Color.from_rgba8(file.get_8(), file.get_8(), file.get_8(), file.get_8())
 	
-	switches.switch_error_vertices = file.get_buffer(system_count * 16).to_vector2_array()
+	switches.error_vertices = file.get_buffer(system_count * 16).to_vector2_array()
 	
-	var switch_progress_quad_count := file.get_32()
-	switches.switch_progress_quad_count = switch_progress_quad_count
-	switches.switch_progress_vertices = file.get_buffer(system_count * switch_progress_quad_count * 32).to_vector2_array()
+	var progress_quad_count := file.get_32()
+	switches.progress_quad_count = progress_quad_count
+	switches.progress_splits = PackedFloat32Array([0.0]) + file.get_buffer(progress_quad_count * 4).to_float32_array()
+	switches.progress_vertices = file.get_buffer(system_count * progress_quad_count * 32).to_vector2_array()
 	
-	switches.switch_success_text = file.get_pascal_string()
-	switches.switch_success_positions = file.get_buffer(system_count * 8).to_vector2_array()
-	
-	var startup_progress_count := file.get_32()
-	switches.startup_progress_count = startup_progress_count
-	switches.startup_progress_positions = file.get_buffer(system_count * startup_progress_count * 8).to_vector2_array()
+	switches.success_text = file.get_pascal_string()
+	switches.success_positions = file.get_buffer(system_count * 8).to_vector2_array()
 	
 	return switches
 
