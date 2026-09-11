@@ -11,6 +11,48 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	
 	var start := BBBootStart.new()
 	
+	var font_path := file.get_pascal_string()
+	start.font = load(font_path) as Font
+	
+	var linesdefs_path := file.get_pascal_string()
+	start.linesdefs = load(linesdefs_path) as BBLinesDefs
+	
+	var spritedefs_path := file.get_pascal_string()
+	start.spritedefs = load(spritedefs_path) as BBSpriteDefs
+	
+	start.duration = file.get_float()
+	
+	var progress_line_idx := file.get_8()
+	if progress_line_idx == UINT8_MAX:
+		progress_line_idx = -1
+	
+	start.progress_line_idx = progress_line_idx
+	
+	var completion_line_idx := file.get_8()
+	if completion_line_idx == UINT8_MAX:
+		completion_line_idx = -1
+	
+	start.completion_line_idx = completion_line_idx
+	
+	var progress_sprites_work_idx := file.get_8()
+	if progress_sprites_work_idx == UINT8_MAX:
+		progress_sprites_work_idx = -1
+	
+	start.progress_sprites_work_idx = progress_sprites_work_idx
+	
+	var progress_sprites_done_idx := file.get_8()
+	if progress_sprites_done_idx == UINT8_MAX:
+		progress_sprites_done_idx = -1
+	
+	start.progress_sprites_done_idx = progress_sprites_done_idx
+	
+	var string_count := file.get_32()
+	for i in string_count:
+		start.text_strings.append(file.get_pascal_string())
+		start.text_positions.append(Vector2(file.get_float(), file.get_float()))
+	
+	start.completion_position = Vector2(file.get_float(), file.get_float())
+	
 	var system_count := file.get_32()
 	
 	start.system_count = system_count
