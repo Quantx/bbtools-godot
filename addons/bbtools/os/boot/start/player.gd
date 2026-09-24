@@ -6,6 +6,7 @@ class_name BBStartPlayer extends Node2D
 @export var start: BBBootStart
 
 @export var color: Color
+@export var color_alt: Color
 
 enum Mode {
 	Work,
@@ -17,6 +18,9 @@ var mode := Mode.Work:
 	set = set_mode
 
 func set_mode(new_mode: Mode) -> void:
+	if mode == new_mode:
+		return
+	
 	mode = new_mode
 	
 	match mode:
@@ -51,11 +55,11 @@ func set_system(idx: int, level: float) -> void:
 	_system_levels.resize(start.system_count)
 	_system_levels[idx] = level
 
-func _draw_sprite(sprite_idx: int) -> void:
+func _draw_sprite(sprite_idx: int, use_alt_color := false) -> void:
 	var sprite: BBSprite = start.spritedefs.defines[sprite_idx]
 	
 	# The spritesheets all use HUD_01.dds texture, so we need to override that here
-	draw_texture_rect_region(sprite.spritesheet.texture, Rect2(sprite.position, sprite.size), sprite.get_texture_rect(), color)
+	draw_texture_rect_region(sprite.spritesheet.texture, Rect2(sprite.position, sprite.size), sprite.get_texture_rect(), color_alt if use_alt_color else color)
 
 func _draw_lines(color_idx: int, lerp_weight := 1.0) -> void:
 	lerp_weight = clampf(lerp_weight, 0.0, 1.0)
@@ -109,7 +113,7 @@ func _draw() -> void:
 		Mode.Pass:
 			_draw_sprite(2)
 		Mode.Fail:
-			_draw_sprite(0)
+			_draw_sprite(0, true)
 	
 	# Work rate
 	if _work_rate >= 0:
