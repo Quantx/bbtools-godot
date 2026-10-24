@@ -94,17 +94,15 @@ static func is_road(surf: Surface) -> bool:
 static func is_water(surf: Surface) -> bool:
 	return surf == Surface.Water_10
 
-static func surface_from_ray(ray: Dictionary) -> Surface:
-	if ray.is_empty():
-		return Surface.None
-	
+static func surface_from_ray(ray: PhysicsIntersectRayResult3D) -> Surface:
 	var collider := ray.collider as CollisionObject3D
-	var owner_id := collider.shape_find_owner(ray.shape)
+	var owner_id := collider.shape_find_owner(ray.collider_shape)
 	var shape := collider.shape_owner_get_owner(owner_id)
-	if !(shape is BBHitboxShape):
-		return Surface.None
 	
 	var hbx_shape := shape as BBHitboxShape
+	if !hbx_shape:
+		return Surface.None
+	
 	return hbx_shape.get_surface(ray)
 
 @export var skeleton: Skeleton3D

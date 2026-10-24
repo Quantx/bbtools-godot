@@ -93,6 +93,7 @@ var projectile_scene: PackedScene:
 
 @export var torso_turn_rate: float
 @export var weight: int
+@export var sniper_scope: bool
 
 @export var muzzle_count := Vector2i.ONE
 @export var muzzle_offset: Vector2
@@ -102,7 +103,7 @@ var projectile_scene: PackedScene:
 
 @export var rapid_fire: int
 
-@export var projectile_count: int
+@export var ammo_count: int
 @export var magazine_count: int
 
 @export var volley_count: int

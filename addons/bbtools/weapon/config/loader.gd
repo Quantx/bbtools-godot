@@ -31,6 +31,7 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	
 	config.torso_turn_rate = file.get_float()
 	config.weight = file.get_8()
+	config.sniper_scope = file.get_8()
 	
 	config.muzzle_count.x = file.get_8()
 	config.muzzle_count.y = file.get_8()
@@ -43,7 +44,7 @@ func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_
 	
 	config.rapid_fire = file.get_16()
 	
-	config.projectile_count = file.get_16()
+	config.ammo_count = file.get_16()
 	config.magazine_count = file.get_8()
 	
 	config.volley_count = file.get_8()

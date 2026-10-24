@@ -188,8 +188,28 @@ func _import_scene(path: String, _flags: int, _options: Dictionary) -> Node:
 		mech.swep_attachments_shoulder.append(_create_marker("SWepAttachmentShoulder%d" % i, mech))
 	
 	for i in 4:
-		var parent := mech.mwep_mount_right if i % 2 == 0 else mech.mwep_mount_left
-		mech.mwep_attachments.append(_create_marker("MWepAttachment%d" % i, mech))
+		var is_left := i % 2 == 1
+		
+		var base := Node3D.new()
+		base.name = "MWepBase%d" % i
+		
+		mech.add_child(base)
+		base.owner = mech
+		
+		var marker := Marker3D.new()
+		marker.name = "MWepAttachment%d" % i
+		marker.gizmo_extents = marker_gizmo_extents
+		
+		base.add_child(marker)
+		marker.owner = mech
+		
+		if i % 2 == 0:
+			mech.mwep_right_bases.append(base)
+		else:
+			marker.scale = Vector3(-1.0, 1.0, 1.0)
+			mech.mwep_left_bases.append(base)
+		
+		mech.mwep_attachments.append(marker)
 	
 	# Compute Movement Animation Velocities
 	mech.chassis_anim_player = mech.chassis.get_node(^"AnimationPlayer") as AnimationPlayer

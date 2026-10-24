@@ -133,6 +133,9 @@ func set_mesh_idx(new_idx: int) -> void:
 @export var camera_sub_front: Marker3D
 @export var camera_sub_back: Marker3D
 
+@export var mwep_right_bases: Array[Node3D]
+@export var mwep_left_bases: Array[Node3D]
+
 @export var swep_attachments_box: Marker3D
 @export var swep_attachments_shoulder: Array[Marker3D] # Size 2
 @export var mwep_attachments: Array[Marker3D] # Size 4
@@ -257,18 +260,9 @@ func _on_mwep_mount_skeleton_updated(skeleton: Skeleton3D, is_left: bool) -> voi
 	var bone_idx_1 := skeleton.find_bone("special_1")
 	assert(bone_idx_1 >= 0)
 	
-	var attach_idx_0 := int(is_left)
-	var attach_idx_1 := attach_idx_0 + 2
-	
-	var mounts: Array[Marker3D] = [mwep_attachments[attach_idx_0], mwep_attachments[attach_idx_1]]
-	
-	mounts[0].global_transform = skeleton.global_transform * skeleton.get_bone_global_pose(bone_idx_0)
-	mounts[1].global_transform = skeleton.global_transform * skeleton.get_bone_global_pose(bone_idx_1)
-	
-	for attachment in mounts:
-		attachment.scale = Vector3.ONE
-		if is_left:
-			attachment.rotate_x(PI)
+	var bases := mwep_left_bases if is_left else mwep_right_bases
+	bases[0].global_transform = skeleton.global_transform * skeleton.get_bone_global_pose(bone_idx_0)
+	bases[1].global_transform = skeleton.global_transform * skeleton.get_bone_global_pose(bone_idx_1)
 
 #region weapons
 func _create_weapon(weapon_config: BBWeaponConfig) -> BBWeapon:

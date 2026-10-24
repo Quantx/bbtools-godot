@@ -3,7 +3,7 @@ class_name BBHitboxShape extends CollisionShape3D
 @export var quads_data: BBHitboxQuadsData
 @export var bone_name : String
 
-func _get_quad_index(ray : Dictionary) -> int:
+func _get_quad_index(ray: PhysicsIntersectRayResult3D) -> int:
 	if shape is HeightMapShape3D:
 		var ray_position := to_local(ray.position)
 		
@@ -12,11 +12,11 @@ func _get_quad_index(ray : Dictionary) -> int:
 		var hm_pos := Vector2i(ray_position.x, ray_position.z) + (hm_size / 2)
 		return hm_pos.y * heightmap.map_width + hm_pos.x
 	
-	assert(ray.face_index >= 0)
-	return int(ray.face_index) / 2 # Conver from Triangles to Quads
+	assert(ray.collider_face_index >= 0)
+	return int(ray.collider_face_index) / 2 # Conver from Triangles to Quads
 
-func get_surface(ray : Dictionary) -> BBHitbox.Surface:
+func get_surface(ray: PhysicsIntersectRayResult3D) -> BBHitbox.Surface:
 	return quads_data.get_surface(_get_quad_index(ray))
 
-func get_layer(ray : Dictionary) -> int:
+func get_layer(ray: PhysicsIntersectRayResult3D) -> int:
 	return quads_data.get_layer(_get_quad_index(ray))

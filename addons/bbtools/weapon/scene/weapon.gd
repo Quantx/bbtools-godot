@@ -100,25 +100,31 @@ func _process(delta: float) -> void:
 			
 			BBEffectManager.spawn(smoke_effect, smoke_effect_args)
 
-func set_weapon_quaternion(quat: Quaternion) -> void:
+func _get_pivot_bone() -> int:
+	if flags & Flags.Shoulder == Flags.Shoulder:
+		return skeleton.find_bone("2")
+	return skeleton.find_bone("0")
+
+func get_pivot_rest() -> Transform3D:
+	var pivot_bone := _get_pivot_bone()
+	assert(pivot_bone >= 0)
+	return skeleton.get_bone_global_rest(pivot_bone)
+
+func get_pivot_global_rest() -> Transform3D:
+	return skeleton.global_transform * get_pivot_rest()
+
+func set_pivot_quaternion(quat: Quaternion) -> void:
 	if flags & Flags.Stationary == Flags.Stationary:
 		return
 	
-	if flags & Flags.Shoulder == Flags.Shoulder:
-		var pivot_idx := skeleton.find_bone("2")
-		assert(pivot_idx >= 0)
-		skeleton.set_bone_pose_rotation(pivot_idx, quat)
-		return
-	
-	model.quaternion = quat
+	var pivot_bone := _get_pivot_bone()
+	assert(pivot_bone >= 0)
+	skeleton.set_bone_pose_rotation(pivot_bone, quat)
 
-func get_weapon_quaternion() -> Quaternion:
-	if flags & Flags.Shoulder == Flags.Shoulder:
-		var pivot_idx = skeleton.find_bone("2")
-		assert(pivot_idx >= 0)
-		return skeleton.get_bone_pose_rotation(pivot_idx)
-	
-	return model.quaternion
+func get_pivot_quaternion() -> Quaternion:
+	var pivot_bone := _get_pivot_bone()
+	assert(pivot_bone >= 0)
+	return skeleton.get_bone_pose_rotation(pivot_bone)
 
 func _get_mech_muzzle(muzzle: int) -> Marker3D:
 	if mech_muzzles.is_empty():
@@ -135,6 +141,18 @@ func get_muzzle_transform(muzzle: int) -> Transform3D:
 	
 	var offset := config.get_muzzle_offset(muzzle)
 	return skeleton.global_transform * skeleton.get_bone_global_pose(muzzle_bone).translated_local(offset)
+
+func get_muzzle_pivot_offset() -> Vector3:
+	var pivot_bone := _get_pivot_bone()
+	assert(pivot_bone >= 0)
+	
+	var muzzle_bone := skeleton.find_bone(get_special(Bones.Muzzle))
+	assert(muzzle_bone >= 0)
+	
+	var pivot_rest := skeleton.get_bone_global_rest(pivot_bone)
+	var muzzle_rest := skeleton.get_bone_global_rest(muzzle_bone)
+	
+	return muzzle_rest.origin - pivot_rest.origin
 
 func charge(muzzle: int = 0) -> void:
 	if charging_effect:
